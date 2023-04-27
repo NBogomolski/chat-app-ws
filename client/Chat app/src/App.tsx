@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import {io, Socket } from "socket.io-client";
+import "./App.css";
+import JoinRoomForm from './components/JoinRoomForm'
+
+const socket: Socket = io("http://localhost:5000"); 
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [roomId, setRoomId] = useState(0)
+	const [username, setUsername] = useState('')
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	useEffect(() => {
+		socket.emit('join_room', {
+			room: roomId,
+			user: username
+		})
+	}, [roomId])
+
+	function onUserRoomJoin(id: number, username: string) {
+		setRoomId(id)
+		setUsername(username)
+	}
+
+    return (
+		<>	
+			{roomId ? (
+				//*Logged in and data is retrieved
+				<h1>Room id: {roomId}</h1>
+			) : ( 
+				//*Not logged in yet
+				<JoinRoomForm joinRoom={onUserRoomJoin}/>
+			)}
+			
+		</>
+    );
 }
 
-export default App
+export default App;
