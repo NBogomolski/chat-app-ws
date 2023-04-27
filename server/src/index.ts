@@ -3,6 +3,7 @@ import cors from 'cors'
 import http from 'http'
 // for socket.io error handling
 import {Server} from 'socket.io'
+import {Message} from './types/Message'
 // actual socket.io
 
 const app = express();
@@ -18,13 +19,12 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:3000",
-        methods: ["GET", "POST"],
     },
 });
 
 io.on("connection", (socket) => {
     console.log(`${socket.id} has connected`);
-
+    console.log(socket)
     socket.on("join_room", (data) => {
         socket.join(data);
         console.log(`${socket.id} has joined room ${data}`);
