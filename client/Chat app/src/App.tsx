@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {io, Socket } from "socket.io-client";
 import "./App.css";
 import JoinRoomForm from './components/JoinRoomForm'
@@ -18,7 +18,7 @@ function App() {
 	const [username, setUsername] = useState('')
 	const [roomUsers, setRoomUsers] = useState<string[]>([])
 	const [messages, setMessages] = useState<Message[]>([])
-
+    const [currentMessage, setCurrentMessage] = useState<string>('')
 
 /*     useEffect(() => {
         
@@ -63,8 +63,16 @@ function App() {
 		setRoomUsers([username])
 	}
 
-    function sendMessage(event: Event) {
-        socket.emit("sendMessage",)
+    function sendMessage() {
+        if (currentMessage == '') return
+        const message: Message = {
+            author: username,
+            text: currentMessage,
+            date: new Date(),
+            room: roomId,
+        };
+        socket.emit("sendMessage", message)
+    
     }
 
     return (
@@ -97,11 +105,13 @@ function App() {
                                 <input
                                     className="flex-grow pl-2"
                                     placeholder="Enter message"
+                                    required
                                     type="text"
                                     name="message"
                                     id="message"
+                                    onChange={(e) => setCurrentMessage(e.target.value)}
                                 />
-                                <button className="flex bg-blue-400 px-2" onClick={sendMessage}>
+                                <button onClick={sendMessage} className="flex bg-blue-400 px-2">
                                     Send
                                 </button>
                             </div>
