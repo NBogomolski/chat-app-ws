@@ -33,9 +33,9 @@ io.on("connection", (socket) => {
     });
 
     socket.on("sendMessage", (data) => {
-        socket.to(data.room).emit("receiveMessage", data);
+        io.to(data.room).emit("receiveMessage", data);
         console.log(
-            `${socket.id} with name ${data.username} has sent a message to room ${data.room}`
+            `${socket.id} with name ${data.author} has sent a message to room ${data.room}`
         );
     });
     socket.on("disconnect", () => {
